@@ -8,40 +8,40 @@
 import Foundation
 
 struct ITunesCustomerReviewsAPIRequestParameter {
-  let path: String = "https://itunes.apple.com/jp/rss/customerreviews/"
-  let parameter: ITunesCustomerReviewsAPIParameter
+    let path: String = "https://itunes.apple.com/jp/rss/customerreviews/"
+    let parameter: ITunesCustomerReviewsAPIParameter
 
-  init(parameter: ITunesCustomerReviewsAPIParameter) {
-    self.parameter = parameter
-  }
+    init(parameter: ITunesCustomerReviewsAPIParameter) {
+        self.parameter = parameter
+    }
 
-  enum Format {
-    case json
-  }
+    enum Format {
+        case json
+    }
 
-  enum SortedBy {
-    case mostRecent
-  }
+    enum SortedBy {
+        case mostRecent
+    }
 
-  func makeURL() -> URL {
-    return URL(
-      string:
-        "\(path)/id=\(parameter.id)/sortBy=\(parameter.sortedBy)/page=\(parameter.page)/\(parameter.format)"
-    )!
-  }
+    func makeURL() -> URL {
+        return URL(
+            string:
+                "\(path)/id=\(parameter.id)/sortBy=\(parameter.sortedBy)/page=\(parameter.page)/\(parameter.format)"
+        )!
+    }
 }
 
 struct ITunesCustomerReviewsAPIRequest: APIRequest {
-  typealias RequestDataType = ITunesCustomerReviewsAPIRequestParameter
-  typealias ResponseDataType = Feed
+    typealias RequestDataType = ITunesCustomerReviewsAPIRequestParameter
+    typealias ResponseDataType = Feed
 
-  init() {}
+    init() {}
 
-  func makeRequest(from data: ITunesCustomerReviewsAPIRequestParameter) throws -> URLRequest {
-    return URLRequest(url: data.makeURL())
-  }
+    func makeRequest(from data: ITunesCustomerReviewsAPIRequestParameter) throws -> URLRequest {
+        return URLRequest(url: data.makeURL())
+    }
 
-  func parseResponse(data: Data) throws -> Feed {
-    return try JSONDecoder().decode(Feed.self, from: data)
-  }
+    func parseResponse(data: Data) throws -> Feed {
+        return try JSONDecoder().decode(Feed.self, from: data)
+    }
 }

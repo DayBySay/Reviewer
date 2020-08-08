@@ -15,3 +15,6 @@ project:
 
 format:
 	make $@ -C SwiftPMTools
+
+lint:
+	make $@ -C SwiftPMTools

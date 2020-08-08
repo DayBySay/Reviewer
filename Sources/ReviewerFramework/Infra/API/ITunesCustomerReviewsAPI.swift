@@ -9,16 +9,10 @@ import Foundation
 
 struct ITunesCustomerReviewsAPIRequestParameter {
     let path: String = "https://itunes.apple.com/jp/rss/customerreviews/"
-    let id: Int
-    let page: Int
-    let format: Format
-    let sortedBy: SortedBy
+    let parameter: ITunesCustomerReviewsAPIParameter
     
-    init(id: Int, page: Int = 1, format: Format = .json, sortedBy: SortedBy = .mostRecent) {
-        self.id = id
-        self.page = page
-        self.format = format
-        self.sortedBy = sortedBy
+    init(parameter: ITunesCustomerReviewsAPIParameter) {
+        self.parameter = parameter
     }
     
     enum Format {
@@ -30,7 +24,7 @@ struct ITunesCustomerReviewsAPIRequestParameter {
     }
     
     func makeURL() -> URL {
-        return URL(string: "\(path)/id=\(id)/sortBy=\(sortedBy)/page=\(page)/\(format)")!
+        return URL(string: "\(path)/id=\(parameter.id)/sortBy=\(parameter.sortedBy)/page=\(parameter.page)/\(parameter.format)")!
     }
 }
 

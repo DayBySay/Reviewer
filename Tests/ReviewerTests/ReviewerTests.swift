@@ -1,5 +1,5 @@
 import XCTest
-import ReviewerFramework
+@testable import ReviewerFramework
 import class Foundation.Bundle
 
 final class ReviewerTests: XCTestCase {

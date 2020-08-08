@@ -5,6 +5,10 @@ import PackageDescription
 
 let package = Package(
     name: "Reviewer",
+    products: [
+        .executable(name: "Reviewer", targets: ["Reviewer"]),
+        .library(name: "ReviewerFramework", targets: ["ReviewerFramework"])
+    ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
@@ -14,7 +18,8 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages which this package depends on.
         .target(
             name: "Reviewer",
-            dependencies: []),
+            dependencies: ["ReviewerFramework"]),
+        .target(name: "ReviewerFramework"),
         .testTarget(
             name: "ReviewerTests",
             dependencies: ["Reviewer"]),

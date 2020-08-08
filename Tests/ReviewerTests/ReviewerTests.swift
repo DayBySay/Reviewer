@@ -1,32 +1,20 @@
 import XCTest
+import ReviewerFramework
 import class Foundation.Bundle
 
 final class ReviewerTests: XCTestCase {
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct
-        // results.
-
-        // Some of the APIs that we use below are available in macOS 10.13 and above.
-        guard #available(macOS 10.13, *) else {
-            return
-        }
-
-        let fooBinary = productsDirectory.appendingPathComponent("Reviewer")
-
-        let process = Process()
-        process.executableURL = fooBinary
-
-        let pipe = Pipe()
-        process.standardOutput = pipe
-
-        try process.run()
-        process.waitUntilExit()
-
-        let data = pipe.fileHandleForReading.readDataToEndOfFile()
-        let output = String(data: data, encoding: .utf8)
-
-        XCTAssertEqual(output, "Hello, world!\n")
+    func testDecodeFeed() throws {
+        let data = FixtureReviewAPI().data(using: .utf8)!
+        let feed = try! JSONDecoder().decode(Feed.self, from: data)
+        let entry = feed.entry[0]
+        
+        XCTAssertEqual(entry.name, "ヤミ。")
+        XCTAssertEqual(entry.rating, "4")
+        XCTAssertEqual(entry.title, "神アプリ")
+        XCTAssertEqual(entry.content, "とにかく周りの人皆んなが暖かく、みんなとすぐに仲良くなることができました！\n面白い人がたくさんいるので、つまらない時がありません！w\nコロナ自粛の期間に気まぐれで始めましたが、今ではやめられないほどハマりました\nだけど不具合が少し多いので、星4で")
+        XCTAssertEqual(entry.version, "3.4.3")
+        XCTAssertEqual(entry.uri, URL(string: "https://itunes.apple.com/jp/reviews/id638572168")!)
+        XCTAssertEqual(entry.link, URL(string: "https://itunes.apple.com/jp/review?id=1404176564&type=Purple%20Software")!)
     }
 
     /// Returns path to the built products directory.
@@ -42,6 +30,6 @@ final class ReviewerTests: XCTestCase {
     }
 
     static var allTests = [
-        ("testExample", testExample),
+        ("testDecodeFeed", testDecodeFeed),
     ]
 }

@@ -6,7 +6,7 @@ func main() {
 
     let command = Executor(parser: parser)
     let inputs = Array(CommandLine.arguments.dropFirst())
-    
+
     do {
         let args = try parser.parse(inputs)
         command.execute(args: args)

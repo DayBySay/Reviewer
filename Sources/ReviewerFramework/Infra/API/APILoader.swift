@@ -10,7 +10,7 @@ import Foundation
 protocol APIRequest {
     associatedtype RequestDataType
     associatedtype ResponseDataType
-    
+
     func makeRequest(from data: RequestDataType) throws -> URLRequest
     func parseResponse(data: Data) throws -> ResponseDataType
 }
@@ -18,14 +18,16 @@ protocol APIRequest {
 class APIRequestLoader<T: APIRequest> {
     let apiRequest: T
     let urlSession: URLSession
-    
+
     init(apiRequest: T, urlSession: URLSession = .shared) {
         self.apiRequest = apiRequest
         self.urlSession = urlSession
     }
-    
-    func loadAPIRequest(requestData: T.RequestDataType,
-                        completionHandler: @escaping (T.ResponseDataType?, Error?) -> Void) {
+
+    func loadAPIRequest(
+        requestData: T.RequestDataType,
+        completionHandler: @escaping (T.ResponseDataType?, Error?) -> Void
+    ) {
         do {
             let urlRequest = try apiRequest.makeRequest(from: requestData)
             urlSession.dataTask(with: urlRequest) { data, response, error in
@@ -40,4 +42,3 @@ class APIRequestLoader<T: APIRequest> {
         } catch { return completionHandler(nil, error) }
     }
 }
-

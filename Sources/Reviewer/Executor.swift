@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import TSCUtility
 import ReviewerFramework
+import TSCUtility
 
 class Executor {
     private let id: PositionalArgument<Int>
@@ -15,17 +15,21 @@ class Executor {
     private let format: OptionArgument<String>
 
     init(parser: ArgumentParser) {
-        id = parser.add(positional: "id", kind: Int.self, usage: "Identifier of app to get data, e.g. 284815942")
-        page = parser.add(option: "--page",
-                          shortName: "-p",
-                          kind: Int.self,
-                          usage: "Get a specific pages reviews. Default is not specified")
-        format = parser.add(option: "--format",
-                          shortName: "-f",
-                          kind: String.self,
-                          usage: "Specify output format. Default is set JSON. Available JSON or XML.")
+        id = parser.add(
+            positional: "id", kind: Int.self, usage: "Identifier of app to get data, e.g. 284815942"
+        )
+        page = parser.add(
+            option: "--page",
+            shortName: "-p",
+            kind: Int.self,
+            usage: "Get a specific pages reviews. Default is not specified")
+        format = parser.add(
+            option: "--format",
+            shortName: "-f",
+            kind: String.self,
+            usage: "Specify output format. Default is set JSON. Available JSON or XML.")
     }
-    
+
     func execute(args: ArgumentParser.Result) {
         let id = args.get(self.id) ?? 0
         let page = args.get(self.page) ?? -1
@@ -40,5 +44,5 @@ class Executor {
             fatalError("Fetch reviews error: \(error)")
         }
     }
-    
+
 }

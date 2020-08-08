@@ -12,3 +12,6 @@ uninstall:
 
 project:
 	swift package generate-xcodeproj
+
+format:
+	make $@ -C SwiftPMTools

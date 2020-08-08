@@ -10,7 +10,6 @@ let package = Package(
         .library(name: "ReviewerFramework", targets: ["ReviewerFramework"])
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-argument-parser", .upToNextMinor(from: "0.0.4")),
         .package(url: "https://github.com/apple/swift-tools-support-core.git", .exact("0.1.5"))
     ],
     targets: [
@@ -18,7 +17,6 @@ let package = Package(
             name: "Reviewer",
             dependencies: [
                 "ReviewerFramework",
-                .product(name: "ArgumentParser", package: "swift-argument-parser"),
                 .product(name: "SwiftToolsSupport-auto", package: "swift-tools-support-core"),
             ]),
         .target(name: "ReviewerFramework"),

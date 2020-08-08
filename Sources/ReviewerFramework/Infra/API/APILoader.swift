@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 
 protocol APIRequest {
     associatedtype RequestDataType
@@ -40,5 +41,14 @@ class APIRequestLoader<T: APIRequest> {
                 }
             }.resume()
         } catch { return completionHandler(nil, error) }
+    }
+    
+    func loadAPIRequest(requestData: T.RequestDataType) throws -> AnyPublisher<T.ResponseDataType, Error> {
+        let request = try apiRequest.makeRequest(from: requestData)
+        return urlSession
+            .dataTaskPublisher(for: request)
+            .map { $0.data }
+            .tryMap { try self.apiRequest.parseResponse(data: $0) }
+            .eraseToAnyPublisher()
     }
 }

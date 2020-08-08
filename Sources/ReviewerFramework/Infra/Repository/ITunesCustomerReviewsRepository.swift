@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 
 class ITunesCustomerReviewsRepository {
     func reviewesJSON(
@@ -27,5 +28,12 @@ class ITunesCustomerReviewsRepository {
 
             completion?(feed, nil)
         }
+    }
+    
+    func reviewsJSON(parameter: ITunesCustomerReviewsAPIParameter) throws -> AnyPublisher<Feed, Error> {
+        let apiRequest = ITunesCustomerReviewsAPIRequest()
+        let loader = APIRequestLoader(apiRequest: apiRequest)
+        let parameter = ITunesCustomerReviewsAPIRequestParameter(parameter: parameter)
+        return try loader.loadAPIRequest(requestData: parameter)
     }
 }

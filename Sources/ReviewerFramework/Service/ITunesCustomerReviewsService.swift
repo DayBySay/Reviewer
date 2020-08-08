@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 
 class ITunesCustomerReviewsService {
     private let repository = ITunesCustomerReviewsRepository()
@@ -43,5 +44,10 @@ class ITunesCustomerReviewsService {
         }
         semaphore.wait()
         return result
+    }
+    
+    func reviewesJSON(id: Int, page: Int, format: String) throws -> AnyPublisher<Feed, Error> {
+        let parameter = ITunesCustomerReviewsAPIParameter(id: id, page: page, format: format)
+        return try repository.reviewsJSON(parameter: parameter)
     }
 }

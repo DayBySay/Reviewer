@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 
 public func generate(id: Int, page: Int, format: String, completion: @escaping ((String) -> Void))
     throws
@@ -34,4 +35,22 @@ public func generate(id: Int, page: Int, format: String, completion: @escaping (
             completion(string)
         }
     }
+}
+
+public func generate(id: Int, page: Int, format: String) throws -> AnyPublisher<String, Error>
+{
+    let service = ITunesCustomerReviewsService()
+    let publisher = try service.reviewesJSON(id: id, page: page, format: format)
+    
+    return publisher
+        .tryMap { (feed) -> String in
+            guard let jsonData = try? JSONEncoder().encode(feed),
+                let string = String(data: jsonData, encoding: .utf8)
+                else {
+                    throw ReviewerError.encode
+            }
+            
+            return string
+        }
+        .eraseToAnyPublisher()
 }

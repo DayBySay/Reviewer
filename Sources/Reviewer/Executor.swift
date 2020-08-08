@@ -8,11 +8,15 @@
 import Foundation
 import ReviewerFramework
 import TSCUtility
+import Combine
 
 class Executor {
     private let id: PositionalArgument<Int>
     private let page: OptionArgument<Int>
     private let format: OptionArgument<String>
+    
+    private var cancellableSet: Set<AnyCancellable> = []
+
 
     init(parser: ArgumentParser) {
         id = parser.add(
@@ -35,14 +39,23 @@ class Executor {
         let page = args.get(self.page) ?? -1
         let format = args.get(self.format) ?? "JSON"
         do {
-            try generate(id: id, page: page, format: format) { (string) in
-                print(string)
-                exit(0)
-            }
+            try generate(id: id, page: page, format: format)
+                .receive(on: DispatchQueue.main)
+                .sink(receiveCompletion: { (completion) in
+                    switch completion {
+                    case .finished: break
+                    case .failure(let error):
+                        print(error)
+                        exit(0)
+                    }
+                }, receiveValue: { (string) in
+                    print(string)
+                    exit(0)
+                })
+                .store(in: &cancellableSet)
         } catch {
             print("Error: \(error.localizedDescription)")
             fatalError("Fetch reviews error: \(error)")
         }
     }
-
 }

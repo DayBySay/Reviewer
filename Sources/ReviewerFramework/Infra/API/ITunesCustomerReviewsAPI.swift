@@ -15,14 +15,6 @@ struct ITunesCustomerReviewsAPIRequestParameter {
         self.parameter = parameter
     }
 
-    enum Format {
-        case json
-    }
-
-    enum SortedBy {
-        case mostRecent
-    }
-
     func makeURL() -> URL {
         return URL(
             string:

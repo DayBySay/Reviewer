@@ -8,7 +8,7 @@
 import Foundation
 
 class ITunesCustomerReviewsRepository {
-    func reviewesJSON(
+    func reviewes(
         parameter: ITunesCustomerReviewsAPIParameter, completion: ((Feed?, Error?) -> Void)?
     ) {
         let apiRequest = ITunesCustomerReviewsAPIRequest()

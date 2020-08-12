@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftyXMLParser
 
 struct ITunesCustomerReviewsAPIRequestParameter {
     let path: String = "https://itunes.apple.com/jp/rss/customerreviews/"
@@ -34,6 +35,15 @@ struct ITunesCustomerReviewsAPIRequest: APIRequest {
     }
 
     func parseResponse(data: Data) throws -> Feed {
-        return try JSONDecoder().decode(Feed.self, from: data)
+        do {
+            return try JSONDecoder().decode(Feed.self, from: data)
+        } catch {
+            let parser = XML.parse(data)
+            let entries = parser["feed"]["entry"].map { (accessor) in
+                Entry.parseXML(accessor: accessor)
+            }
+            let feed = Feed(entry: entries)
+            return feed
+        }
     }
 }

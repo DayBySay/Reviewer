@@ -27,7 +27,7 @@ class Executor {
             option: "--format",
             shortName: "-f",
             kind: String.self,
-            usage: "Specify output format. Default is set JSON. Available JSON or XML.")
+            usage: "Specify output format. Default is set JSON. Available JSON or CSV.")
     }
 
     func execute(args: ArgumentParser.Result) {

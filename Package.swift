@@ -10,7 +10,8 @@ let package = Package(
         .library(name: "ReviewerFramework", targets: ["ReviewerFramework"])
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-tools-support-core.git", .exact("0.1.5"))
+        .package(url: "https://github.com/apple/swift-tools-support-core.git", .exact("0.1.5")),
+        .package(url: "https://github.com/yahoojapan/SwiftyXMLParser.git", .exact("5.2.0"))
     ],
     targets: [
         .target(
@@ -19,9 +20,16 @@ let package = Package(
                 "ReviewerFramework",
                 .product(name: "SwiftToolsSupport-auto", package: "swift-tools-support-core"),
             ]),
-        .target(name: "ReviewerFramework"),
+        .target(
+            name: "ReviewerFramework",
+            dependencies: [
+                .product(name: "SwiftyXMLParser", package: "SwiftyXMLParser"),
+            ]),
         .testTarget(
             name: "ReviewerTests",
-            dependencies: ["Reviewer"]),
+            dependencies: [
+                "Reviewer",
+                .product(name: "SwiftyXMLParser", package: "SwiftyXMLParser"),
+            ]),
     ]
 )

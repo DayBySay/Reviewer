@@ -14,11 +14,11 @@ struct ITunesCustomerReviewsAPIParameter {
     let sortedBy: SortedBy
 
     init(
-        id: Int, page: Int, format: String = Format.json.rawValue, sortedBy: SortedBy = .mostRecent
+        id: Int, page: Int, format: String = Format.xml.rawValue, sortedBy: SortedBy = .mostRecent
     ) {
         self.id = id
         self.page = page
-        self.format = Format.init(rawValue: format) ?? .json
+        self.format = Format.init(rawValue: format) ?? .xml
         self.sortedBy = sortedBy
     }
 

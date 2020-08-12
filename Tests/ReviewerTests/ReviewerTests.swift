@@ -1,4 +1,5 @@
 import XCTest
+import SwiftyXMLParser
 
 import class Foundation.Bundle
 
@@ -7,7 +8,7 @@ import class Foundation.Bundle
 final class ReviewerTests: XCTestCase {
     func testDecodeFeed() throws {
         let data = FixtureReviewAPI().data(using: .utf8)!
-        let feed = try! JSONDecoder().decode(Feed.self, from: data)
+        let feed = try JSONDecoder().decode(Feed.self, from: data)
         let entry = feed.entry[0]
 
         XCTAssertEqual(entry.name, "ヤミ。")
@@ -23,6 +24,30 @@ final class ReviewerTests: XCTestCase {
             entry.link,
             URL(string: "https://itunes.apple.com/jp/review?id=1404176564&type=Purple%20Software")!)
     }
+    
+    func testDecodeFeedXML() throws {
+        let data = fixtureReviewAPIXML()
+        let parser = XML.parse(data)
+        let entries = parser["feed"]["entry"].map { (accessor) in
+            Entry.parseXML(accessor: accessor)
+        }
+
+        let entry = entries[0]
+        XCTAssertEqual(entry.name, "単刀直入にさきいか")
+        XCTAssertEqual(entry.rating, "5")
+        XCTAssertEqual(entry.title, "髪型追加してもらいたい")
+        XCTAssertEqual(
+            entry.content,
+            "いろんな髪型追加して欲しい\n片方ツインテールとかさまざまな髪型追加してほしいです\nゲーム機能ついているのはいいと思う"
+        )
+        XCTAssertEqual(entry.version, "3.5.0")
+        XCTAssertEqual(entry.uri, URL(string: "https://itunes.apple.com/jp/reviews/id945418104")!)
+        XCTAssertEqual(
+            entry.link,
+            URL(string: "https://itunes.apple.com/jp/review?id=1404176564&type=Purple%20Software")!)
+        XCTAssertEqual(entry.date, Date(timeIntervalSinceReferenceDate: 618923180.0))
+    }
+
 
     /// Returns path to the built products directory.
     var productsDirectory: URL {

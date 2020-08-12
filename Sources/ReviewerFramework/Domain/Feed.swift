@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftyXMLParser
 
 struct Feed: Codable, Equatable {
     let entry: [Entry]
@@ -13,6 +14,10 @@ struct Feed: Codable, Equatable {
     private enum CodingKeys: String, CodingKey {
         case feed
         case entry
+    }
+    
+    init(entry: [Entry]) {
+        self.entry = entry
     }
 
     init(from decoder: Decoder) throws {
@@ -35,6 +40,7 @@ struct Entry: Codable, Equatable {
     let version: String
     let uri: URL?
     let link: URL?
+    let date: Date?
 
     private enum CodingKeys: String, CodingKey {
         case author
@@ -48,6 +54,17 @@ struct Entry: Codable, Equatable {
         case link
         case attributes
         case href
+    }
+    
+    init(name: String, rating: String, title: String, content: String, version: String, uri: URL?, link: URL?, date: Date?) {
+        self.name = name
+        self.rating = rating
+        self.title = title
+        self.content = content
+        self.version = version
+        self.uri = uri
+        self.link = link
+        self.date = date
     }
 
     init(from decoder: Decoder) throws {
@@ -78,6 +95,8 @@ struct Entry: Codable, Equatable {
             .nestedContainer(keyedBy: CodingKeys.self, forKey: .attributes)
             .decode(String.self, forKey: .href)
         link = URL(string: linkString)
+        
+        date = nil
     }
 
     func encode(to encoder: Encoder) throws {
@@ -89,5 +108,23 @@ struct Entry: Codable, Equatable {
         try container.encode(content, forKey: .content)
         try container.encode(uri, forKey: .uri)
         try container.encode(link, forKey: .link)
+    }
+    
+    static func parseXML(accessor: XML.Accessor) -> Entry {
+        var date: Date?
+        if #available(OSX 10.12, *) {
+            let dateString = accessor["updated"].text!
+            let formatter = ISO8601DateFormatter()
+            date = formatter.date(from: dateString)
+        }
+
+        return Entry(name: accessor["author"]["name"].text!,
+                     rating: accessor["im:rating"].text!,
+                     title: accessor["title"].text!,
+                     content: accessor["content"][0].text!,
+                     version: accessor["im:version"].text!,
+                     uri: URL(string: accessor["author"]["uri"].text!),
+                     link: URL(string: accessor["link"].attributes["href"]!),
+                     date: date)
     }
 }

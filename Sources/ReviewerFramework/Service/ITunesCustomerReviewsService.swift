@@ -34,7 +34,7 @@ class ITunesCustomerReviewsService {
         let parameter = ITunesCustomerReviewsAPIParameter(
             id: id,
             page: page,
-            format: "XML",
+            format: "xml",
             sortedBy: .mostRecent)
         let semaphore = DispatchSemaphore(value: 0)
         repository.reviewes(parameter: parameter) { (feed, error) in

@@ -42,6 +42,7 @@ struct Entry: Codable, Equatable {
     let link: URL?
     let updated: Date?
 
+
     private enum CodingKeys: String, CodingKey {
         case author
         case uri
@@ -67,7 +68,7 @@ struct Entry: Codable, Equatable {
         self.link = link
         self.updated = updated
     }
-
+    
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 

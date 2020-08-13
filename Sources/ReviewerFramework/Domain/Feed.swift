@@ -40,7 +40,8 @@ struct Entry: Codable, Equatable {
     let version: String
     let uri: URL?
     let link: URL?
-    let date: Date?
+    let updated: Date?
+
 
     private enum CodingKeys: String, CodingKey {
         case author
@@ -54,9 +55,10 @@ struct Entry: Codable, Equatable {
         case link
         case attributes
         case href
+        case updated
     }
     
-    init(name: String, rating: String, title: String, content: String, version: String, uri: URL?, link: URL?, date: Date?) {
+    init(name: String, rating: String, title: String, content: String, version: String, uri: URL?, link: URL?, updated: Date?) {
         self.name = name
         self.rating = rating
         self.title = title
@@ -64,9 +66,9 @@ struct Entry: Codable, Equatable {
         self.version = version
         self.uri = uri
         self.link = link
-        self.date = date
+        self.updated = updated
     }
-
+    
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
@@ -96,7 +98,7 @@ struct Entry: Codable, Equatable {
             .decode(String.self, forKey: .href)
         link = URL(string: linkString)
         
-        date = nil
+        updated = nil
     }
 
     func encode(to encoder: Encoder) throws {
@@ -108,14 +110,19 @@ struct Entry: Codable, Equatable {
         try container.encode(content, forKey: .content)
         try container.encode(uri, forKey: .uri)
         try container.encode(link, forKey: .link)
+        
+        if #available(OSX 10.12, *) {
+            let formatter = ISO8601DateFormatter()
+            try container.encode(formatter.string(from: updated!), forKey: .updated)
+        }
     }
     
     static func parseXML(accessor: XML.Accessor) -> Entry {
-        var date: Date?
+        var updated: Date?
         if #available(OSX 10.12, *) {
             let dateString = accessor["updated"].text!
             let formatter = ISO8601DateFormatter()
-            date = formatter.date(from: dateString)
+            updated = formatter.date(from: dateString)
         }
 
         return Entry(name: accessor["author"]["name"].text!,
@@ -125,6 +132,42 @@ struct Entry: Codable, Equatable {
                      version: accessor["im:version"].text!,
                      uri: URL(string: accessor["author"]["uri"].text!),
                      link: URL(string: accessor["link"].attributes["href"]!),
-                     date: date)
+                     updated: updated)
+    }
+}
+
+
+extension Entry: Loopable {
+    func allStringProperties() throws -> [String : String] {
+        var result: [String: String] = [:]
+        
+        let mirror = Mirror(reflecting: self)
+        
+        // Optional check to make sure we're iterating over a struct or class
+        guard let style = mirror.displayStyle, style == .struct || style == .class else {
+            throw NSError()
+        }
+        
+        for (property, value) in mirror.children {
+            guard let property = property else {
+                continue
+            }
+            
+            var v: Any = value
+            let mirror = Mirror(reflecting: value)
+            if mirror.displayStyle == .optional {
+                v = mirror.children.first!.value
+            }
+
+            if let v = v as? CustomStringConvertible  {
+                result[property] = v.description
+            }
+        }
+        
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy/MM/dd"
+        result["updated"] = formatter.string(from: updated!)
+        
+        return result
     }
 }

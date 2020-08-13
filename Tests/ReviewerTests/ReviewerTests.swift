@@ -45,7 +45,7 @@ final class ReviewerTests: XCTestCase {
         XCTAssertEqual(
             entry.link,
             URL(string: "https://itunes.apple.com/jp/review?id=1404176564&type=Purple%20Software")!)
-        XCTAssertEqual(entry.date, Date(timeIntervalSinceReferenceDate: 618923180.0))
+        XCTAssertEqual(entry.updated, Date(timeIntervalSinceReferenceDate: 618923180.0))
     }
 
 
